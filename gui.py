@@ -1,12 +1,8 @@
-# import pygame.draw
-# import pygame.font
-# import pygame.event
-# import pygame.display
-# import pygame.mouse
 import sys
 from typing import Union
 
 import pygame
+import requests
 
 pygame.init()
 pygame.font.init()
@@ -37,17 +33,23 @@ def isValid(board: list[list[int]], guess: int, row: int, col: int) -> bool:
     return True
 
 
+def GetBoard():
+    return requests.get("https://sugoku.herokuapp.com/board?difficulty=random").json()["board"]
+
+
 class Sudoku:
     screenSize = (WIDTH, HEIGHT) = (450, 500)
     screen = pygame.display.set_mode(screenSize)
+    pygame.display.set_caption("SUDOKU")
+
+    g = GetBoard()
+
     running = True
 
     font1 = pygame.font.SysFont("comicsans", 40)
     font2 = pygame.font.SysFont("impact", 20)
 
     dif = WIDTH // 9
-
-    g = [[0 for _ in range(9)] for _ in range(9)]
 
     x, y = 1, 1
 
@@ -168,6 +170,9 @@ class Sudoku:
 
                     if event.key == pygame.K_r:
                         self.Reset()
+
+                    if event.key == pygame.K_f:
+                        self.g = GetBoard()
 
             self.x = min(max(0, self.x), 8)
             self.y = min(max(0, self.y), 8)
